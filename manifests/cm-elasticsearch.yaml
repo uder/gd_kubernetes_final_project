@@ -1,0 +1,23 @@
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: cm-es01
+data:
+  node.name: es01
+  discovery.seed_hosts: es02
+  cluster.initial_master_nodes: es01,es02
+  cluster_name: docker-cluster
+  bootstrap.memory_lock: "false"
+
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: cm-es02
+data:
+  node.name: es02
+  discovery.seed_hosts: es01
+  cluster.initial_master_nodes: es01,es02
+  cluster_name: docker-cluster
+  bootstrap.memory_lock: "false"

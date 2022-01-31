@@ -1,0 +1,31 @@
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: websrv-ingress
+  annotations:
+    nginx.ingress.kubernetes.io/rewrite-target: /
+    #nginx.ingress.kubernetes.io/rewrite-target: /$1
+    #nginx.ingress.kubernetes.io/proxy-redirect-from: "/"
+    #nginx.ingress.kubernetes.io/proxy-redirect-to: "/kibana/"
+    #nginx.ingress.kubernetes.io/app-root: /
+spec:
+  ingressClassName: nginx
+  rules:
+  - http:
+      paths:
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: websrv-svc
+            port:
+              number: 8085 
+      - path: /kibana/
+        pathType: Prefix
+        backend:
+          service:
+            name: kibana-svc
+            port:
+              number: 5601 
+

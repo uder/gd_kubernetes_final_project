@@ -1,0 +1,127 @@
+---
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: es01-sts
+  labels:
+    app: es
+spec:
+  serviceName: es
+  selector:
+    matchLabels:
+      app: es
+  replicas: 1
+  template:  
+    metadata:
+      labels:
+        app: es
+        instance: "01"
+    spec:
+      volumes:
+        - name: es01-pv-storage
+          persistentVolumeClaim:
+            claimName: es01-pvc
+      containers:
+        - name: es01-container
+          image: docker.elastic.co/elasticsearch/elasticsearch:7.1.1
+          ports:
+            - containerPort: 9200
+          volumeMounts:
+            - name: es01-pv-storage
+              mountPath: /usr/share/elasticsearch/data/
+          envFrom:
+          - configMapRef:
+              name: cm-es01 
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: es01
+  labels:
+    app: es
+spec:
+  clusterIP: None
+  type: ClusterIP
+  ports:
+    - name: rest
+      port: 9200
+      targetPort: 9200
+    - name: node-communication
+      port: 9300
+      targetPort: 9300
+  selector:
+    app: es
+    instance: "01"
+
+      #---
+      #apiVersion: v1
+      #kind: Service
+      #metadata:
+      #  name: es01-svc
+      #  labels:
+      #    app: es
+      #spec:
+      #  type: LoadBalancer
+      #  ports:
+      #    - port: 9200
+      #      targetPort: 9200
+      #  selector:
+      #    app: es
+      #    instance: "01"
+
+---
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: es02-sts
+  labels:
+    app: es
+spec:
+  serviceName: es
+  selector:
+    matchLabels:
+      app: es
+  replicas: 1
+  template:  
+    metadata:
+      labels:
+        app: es
+        instance: "02"
+    spec:
+      volumes:
+        - name: es02-pv-storage
+          persistentVolumeClaim:
+            claimName: es02-pvc
+      containers:
+        - name: es02-container
+          image: docker.elastic.co/elasticsearch/elasticsearch:7.1.1
+          ports:
+            - containerPort: 9200
+          volumeMounts:
+            - name: es02-pv-storage
+              mountPath: /usr/share/elasticsearch/data/
+          envFrom:
+          - configMapRef:
+              name: cm-es02 
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: es02
+  labels:
+    app: es
+spec:
+  clusterIP: None
+  type: ClusterIP
+  ports:
+    - name: rest
+      port: 9200
+      targetPort: 9200
+    - name: node-communication
+      port: 9300
+      targetPort: 9300
+  selector:
+    app: es
+    instance: "02"
